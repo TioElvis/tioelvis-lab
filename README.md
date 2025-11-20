@@ -46,6 +46,7 @@ This project was built with inspiration and help from:
 
 - **[GitBook](https://www.gitbook.com/)** - For the hierarchical documentation structure concept
 - **[Anthropic Claude](https://www.anthropic.com/)** - AI assistance during development
+- **[shadcn/ui](https://github.com/shadcn-ui/ui)** - AI assistance during development
 
 ---
 
