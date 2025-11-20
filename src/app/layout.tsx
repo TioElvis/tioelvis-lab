@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { QueryProvider } from "@/providers/query";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -27,7 +28,7 @@ export default function Layout({ children }: Readonly<Props>) {
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-          {children}
+          <QueryProvider>{children}</QueryProvider>
         </ThemeProvider>
       </body>
     </html>
