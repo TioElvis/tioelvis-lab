@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  projects  Project[]
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Project {
+  id          String  @id @default(cuid())
+  title       String
+  slug        String  @unique
+  description String  @db.Text
+  cover       String?
+
+  //  Metadata
+  languages String[]
+  tags      String[]
+  repo_url  String?
+  demo_url  String?
+
+  //  Status and Flags
+  status   ProjectStatus @default(DRAFT)
+  featured Boolean       @default(false)
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+
+  // Relations
+  author_id String
+  author    User      @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  sections  Section[]
+
+  @@index([status])
+  @@index([slug])
+  @@index([author_id])
+}
+
+model Section {
+  id      String @id @default(cuid())
+  title   String
+  slug    String
+  content String @db.Text // Markdown/HTML content
+  order   Int
+
+  // Hierarchical relationship
+  parent_id String?
+  parent    Section?  @relation("SectionHierarchy", fields: [parent_id], references: [id], onDelete: Cascade)
+  children  Section[] @relation("SectionHierarchy")
+
+  //  Metadata
+  icon String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  project_id String
+  project    Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@unique([project_id, slug])
+  @@index([project_id, order])
+  @@index([parent_id])
+}
+
+// TODO: Example Project Data
+// {
+//   title: "Tasks API with Express",
+//   slug: "api-task-express",
+//   sections: [
+//     {
+//       order: 1,
+//       title: "Introduction",
+//       slug: "introduction",
+//       content: "In this project I built a REST API...",
+//       parent_id: null
+//     },
+//     {
+//       order: 2,
+//       title: "Authentication",
+//       slug: "authentication",
+//       content: "I implemented JWT to authenticate users...",
+//       parent_id: null,
+//       children: [
+//         {
+//           order: 1,
+//           title: "JWT Setup",
+//           slug: "setup-jwt",
+//           content: "First I installed jsonwebtoken...",
+//           parent_id: "<authentication-section-id>"
+//         }
+//       ]
+//     }
+//   ]
+// }
