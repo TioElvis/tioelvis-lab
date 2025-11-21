@@ -11,7 +11,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "TioElvis Labs",
+  title: "TioElvis Lab",
   description: "Personal projects and experiments by TioElvis.",
 };
 
