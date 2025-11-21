@@ -7,10 +7,18 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  ADMIN
+  SUPERADMIN
+}
+
+// This is only for authentication purposes
 model User {
   id        String    @id @default(cuid())
   email     String    @unique
   name      String
+  password  String
+  role      UserRole  @default(ADMIN)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   projects  Project[]
