@@ -2,7 +2,9 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/providers/query";
+import { SessionProvider } from "next-auth/react";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -28,8 +30,11 @@ export default function Layout({ children }: Readonly<Props>) {
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <SessionProvider>{children}</SessionProvider>
+          </QueryProvider>
         </ThemeProvider>
+        <Toaster richColors />
       </body>
     </html>
   );
