@@ -19,7 +19,7 @@ export async function DashboardSidebar() {
         <h2 className="text-xl font-bold text-primary">TioElvis Lab</h2>
         <p className="text-xs text-muted-foreground">Dashboard</p>
       </SidebarHeader>
-      <SidebarContent className="py-6">
+      <SidebarContent className="py-6 px-2 lg:px-0">
         <DashboardSidebarMenu />
       </SidebarContent>
       <SidebarFooter>

@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { Header } from "./components/header";
 import { DashboardSidebar } from "./components/dashboard-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
@@ -18,7 +19,8 @@ export default async function Layout({ children }: Readonly<Props>) {
     <SidebarProvider>
       <DashboardSidebar />
       <SidebarInset>
-        <main>{children}</main>
+        <Header />
+        <main className="flex-1 p-4">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );
