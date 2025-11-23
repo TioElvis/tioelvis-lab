@@ -3,12 +3,16 @@ import { Button } from "@/components/ui/button";
 import { TextAlignJustifyIcon } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
 
-export function Header() {
+interface Props {
+  children: React.ReactNode;
+}
+
+export function DashboardHeader({ children }: Readonly<Props>) {
   const { toggleSidebar, isMobile } = useSidebar();
 
   return (
-    isMobile && (
-      <header className="w-full p-8">
+    <header className="flex items-center gap-8">
+      {isMobile && (
         <Button
           variant="outline"
           size="icon"
@@ -16,7 +20,8 @@ export function Header() {
           onClick={toggleSidebar}>
           <TextAlignJustifyIcon />
         </Button>
-      </header>
-    )
+      )}
+      {children}
+    </header>
   );
 }
