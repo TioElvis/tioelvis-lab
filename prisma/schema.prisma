@@ -27,30 +27,38 @@ model User {
 enum ProjectStatus {
   DRAFT
   PUBLISHED
-  ARCHIVED
+}
+
+enum Languages {
+  JAVASCRIPT
+  TYPESCRIPT
+  PYTHON
+  GO
+  JAVA
+  CPP
+  C
+  RUST
 }
 
 model Project {
-  id          String  @id @default(cuid())
+  id          String @id @default(cuid())
   title       String
-  slug        String  @unique
-  description String  @db.Text
-  cover       String?
+  slug        String @unique
+  description String @db.Text
 
   //  Metadata
-  languages String[]
-  tags      String[]
+  languages Languages[]
   repo_url  String?
   demo_url  String?
+  tags      String[]
 
   //  Status and Flags
   status   ProjectStatus @default(DRAFT)
   featured Boolean       @default(false)
 
   // Timestamps
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  publishedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
   author_id String
