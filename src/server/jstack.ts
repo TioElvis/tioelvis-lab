@@ -1,4 +1,7 @@
+import { db } from "@/lib/db";
 import { jstack } from "jstack";
+import { auth } from "@/lib/auth";
+import { HTTPException } from "hono/http-exception";
 
 interface Env {
   Bindings: { DATABASE_URL: string };
@@ -6,4 +9,25 @@ interface Env {
 
 export const j = jstack.init<Env>();
 
-export const PublicProcedure = j.procedure;
+const auth_middleware = j.middleware(async ({ next }) => {
+  const session = await auth();
+
+  if (!session) {
+    throw new HTTPException(401, { message: "Unauthorized" });
+  }
+
+  const user_id = session?.user.id;
+
+  const user = await db.user.findUnique({
+    where: { id: user_id },
+  });
+
+  if (user === null) {
+    throw new HTTPException(401, { message: "Unauthorized" });
+  }
+
+  return next({ user });
+});
+
+export const public_procedure = j.procedure;
+export const private_procedure = public_procedure.use(auth_middleware);

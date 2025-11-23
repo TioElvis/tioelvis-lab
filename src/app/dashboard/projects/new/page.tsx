@@ -1,4 +1,5 @@
 "use client";
+import z from "zod";
 import {
   CheckIcon,
   ChevronDownIcon,
@@ -15,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -22,8 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { client } from "@/lib/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,11 +33,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useForm } from "react-hook-form";
+import { Fragment, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { ProjectSchema } from "@/lib/schemas";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { useMutation } from "@tanstack/react-query";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Languages, ProjectStatus } from "@/generated/prisma/enums";
@@ -55,7 +60,9 @@ const LANGUAGES = [
 export default function Page() {
   const [tag, setTag] = useState("");
   const [tags, setTags] = useState<Array<string>>([]);
-  const [langs, setLangs] = useState<Array<Languages>>([]);
+  const [languages, setLanguages] = useState<Array<Languages>>([]);
+
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(ProjectSchema),
@@ -71,15 +78,30 @@ export default function Page() {
     mode: "onSubmit",
   });
 
-  const onSubmit = form.handleSubmit((values) => {
-    const payload = {
-      ...values,
-      tags,
-      langs,
-    };
+  const mutation = useMutation({
+    mutationFn: async (values: z.infer<typeof ProjectSchema>) => {
+      const response = await client.project.createProject.$post({
+        ...values,
+        tags,
+        languages,
+      });
 
-    console.log(payload);
+      return await response.json();
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Failed to create project. Please try again.");
+    },
+    onSuccess: (data) => {
+      toast.success("Project created successfully!");
+      form.reset();
+      setTags([]);
+      setLanguages([]);
+      router.push(`/dashboard/projects/${data.slug}`);
+    },
   });
+
+  const onSubmit = form.handleSubmit((values) => mutation.mutate(values));
 
   return (
     <Form {...form}>
@@ -261,10 +283,15 @@ export default function Page() {
                           key={lang.value}
                           className="cursor-pointer"
                           onClick={() => {
-                            if (langs.includes(lang.value as Languages)) {
-                              setLangs(langs.filter((l) => l !== lang.value));
+                            if (languages.includes(lang.value as Languages)) {
+                              setLanguages(
+                                languages.filter((l) => l !== lang.value)
+                              );
                             } else {
-                              setLangs([...langs, lang.value as Languages]);
+                              setLanguages([
+                                ...languages,
+                                lang.value as Languages,
+                              ]);
                             }
                           }}>
                           <span
@@ -273,7 +300,7 @@ export default function Page() {
                             )}
                           />
                           {lang.label}
-                          {langs.includes(lang.value as Languages) && (
+                          {languages.includes(lang.value as Languages) && (
                             <CheckIcon />
                           )}
                         </DropdownMenuItem>
@@ -281,13 +308,13 @@ export default function Page() {
                     })}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                {langs.length === 0 ? (
+                {languages.length === 0 ? (
                   <p className="text-sm text-muted-foreground">
                     No languages selected
                   </p>
                 ) : (
                   <div className="flex flex-wrap gap-2">
-                    {langs.map((lang) => {
+                    {languages.map((lang) => {
                       const langData = LANGUAGES.find((l) => l.value === lang);
                       if (!langData) return null;
                       return (
@@ -303,8 +330,10 @@ export default function Page() {
                           <XIcon
                             className="w-4 h-4 cursor-pointer"
                             onClick={() => {
-                              if (langs.includes(lang)) {
-                                setLangs(langs.filter((l) => l !== lang));
+                              if (languages.includes(lang)) {
+                                setLanguages(
+                                  languages.filter((l) => l !== lang)
+                                );
                               }
                             }}
                           />
@@ -337,7 +366,8 @@ export default function Page() {
                         setTag("");
                         setTags([...tags, tag]);
                       }
-                    }}>
+                    }}
+                    className="cursor-pointer">
                     <PlusIcon />
                   </Button>
                 </div>
@@ -363,8 +393,16 @@ export default function Page() {
               </div>
             </CardContent>
           </Card>
-          <Button className="w-full cursor-pointer">
-            Publish <PlaneIcon />
+          <Button
+            className="w-full cursor-pointer"
+            disabled={mutation.isPending}>
+            {mutation.isPending ? (
+              "Creating..."
+            ) : (
+              <Fragment>
+                Publish <PlaneIcon />
+              </Fragment>
+            )}
           </Button>
         </section>
       </form>
