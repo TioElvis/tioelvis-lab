@@ -43,7 +43,7 @@ export default function Page() {
       {/* Header */}
       <header className="fixed h-16 top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
         <MaxWidthWrapper className="flex items-center justify-between">
-          <span className="font-bold uppercase text-muted-foreground">
+          <span className="font-bold text-sm uppercase text-muted-foreground">
             tioelvis laboratory
           </span>
           <nav className="flex gap-2">
