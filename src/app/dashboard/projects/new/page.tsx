@@ -20,6 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { client } from "@/lib/client";
 import { Fragment, useState } from "react";
+import { LANGUAGES } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,17 +36,6 @@ import { Languages, ProjectStatus } from "@prisma/client";
 import { CheckIcon, PlaneIcon, PlusIcon, XIcon } from "lucide-react";
 import { DashboardHeader } from "@/app/dashboard/components/dashboard-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const LANGUAGES = [
-  { value: "JAVASCRIPT", label: "JavaScript", color: "bg-yellow-500" },
-  { value: "TYPESCRIPT", label: "TypeScript", color: "bg-blue-500" },
-  { value: "PYTHON", label: "Python", color: "bg-green-500" },
-  { value: "GO", label: "Go", color: "bg-cyan-500" },
-  { value: "JAVA", label: "Java", color: "bg-orange-500" },
-  { value: "CPP", label: "C++", color: "bg-purple-500" },
-  { value: "C", label: "C", color: "bg-gray-500" },
-  { value: "RUST", label: "Rust", color: "bg-red-500" },
-] as const;
 
 export default function Page() {
   const [inputTag, setInputTag] = useState("");
@@ -116,7 +106,7 @@ export default function Page() {
     },
     onSuccess: (response) => {
       toast.success("Project created successfully");
-      router.push(`/dashboard/project/${response.slug}`);
+      router.push(`/dashboard/projects/${response.slug}`);
     },
     onError: (error) => {
       toast.error(error.message);
