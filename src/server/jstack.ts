@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
+import { auth } from "@/auth";
 import { jstack } from "jstack";
-import { auth } from "@/lib/auth";
 import { HTTPException } from "hono/http-exception";
 
 interface Env {
@@ -16,7 +16,7 @@ const auth_middleware = j.middleware(async ({ next }) => {
     throw new HTTPException(401, { message: "Unauthorized" });
   }
 
-  const user_id = session?.user.id;
+  const user_id = session?.user?.id;
 
   const user = await db.user.findUnique({
     where: { id: user_id },

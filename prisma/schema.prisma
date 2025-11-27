@@ -1,27 +1,9 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-}
-
-enum UserRole {
-  ADMIN
-  SUPERADMIN
-}
-
-// This is only for authentication purposes
-model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  name      String
-  password  String
-  role      UserRole  @default(ADMIN)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  projects  Project[]
 }
 
 enum ProjectStatus {
@@ -38,6 +20,20 @@ enum Languages {
   CPP
   C
   RUST
+  PHP
+  RUBY
+  SWIFT
+  KOTLIN
+}
+
+model User {
+  id        String    @id @default(cuid())
+  name      String?
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  projects  Project[]
 }
 
 model Project {
@@ -46,19 +42,20 @@ model Project {
   slug        String @unique
   description String @db.Text
 
-  //  Metadata
+  // Metadata
   languages Languages[]
   repo_url  String?
   demo_url  String?
   tags      String[]
 
-  //  Status and Flags
+  // Status flags
   status   ProjectStatus @default(DRAFT)
   featured Boolean       @default(false)
 
   // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
 
   // Relations
   author_id String
@@ -68,22 +65,23 @@ model Project {
   @@index([status])
   @@index([slug])
   @@index([author_id])
+  @@index([featured])
 }
 
 model Section {
   id      String @id @default(cuid())
   title   String
   slug    String
-  content String @db.Text // Markdown/HTML content
+  content String @db.Text // HTML/Markdown content from Tiptap
   order   Int
 
-  // Hierarchical relationship
+  // Hierarchical relationship (for nested sections)
   parent_id String?
   parent    Section?  @relation("SectionHierarchy", fields: [parent_id], references: [id], onDelete: Cascade)
   children  Section[] @relation("SectionHierarchy")
 
-  //  Metadata
-  icon String?
+  // Metadata
+  icon String? // Emoji
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -97,34 +95,3 @@ model Section {
   @@index([project_id, order])
   @@index([parent_id])
 }
-
-// TODO: Example Project Data
-// {
-//   title: "Tasks API with Express",
-//   slug: "api-task-express",
-//   sections: [
-//     {
-//       order: 1,
-//       title: "Introduction",
-//       slug: "introduction",
-//       content: "In this project I built a REST API...",
-//       parent_id: null
-//     },
-//     {
-//       order: 2,
-//       title: "Authentication",
-//       slug: "authentication",
-//       content: "I implemented JWT to authenticate users...",
-//       parent_id: null,
-//       children: [
-//         {
-//           order: 1,
-//           title: "JWT Setup",
-//           slug: "setup-jwt",
-//           content: "First I installed jsonwebtoken...",
-//           parent_id: "<authentication-section-id>"
-//         }
-//       ]
-//     }
-//   ]
-// }

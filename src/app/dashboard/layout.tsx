@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { DashboardSidebar } from "./components/dashboard-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -11,13 +11,15 @@ export default async function Layout({ children }: Readonly<Props>) {
   const session = await auth();
 
   if (!session) {
-    return redirect("/auth/sign-in");
+    redirect("/auth/sign-in");
   }
 
   return (
     <SidebarProvider>
       <DashboardSidebar />
-      <SidebarInset className="p-8">{children}</SidebarInset>
+      <SidebarInset className="p-8">
+        <main className="flex-1">{children}</main>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

@@ -17,7 +17,7 @@ export function ModeToggle({ className, ...props }: Props) {
   const { setTheme } = useTheme();
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           className={cn(`cursor-pointer`, className)}

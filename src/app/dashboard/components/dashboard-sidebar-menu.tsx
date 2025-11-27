@@ -5,6 +5,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { FoldersIcon, HomeIcon, PlusIcon } from "lucide-react";
@@ -39,7 +40,9 @@ export function DashboardSidebarMenu() {
               className="cursor-pointer justify-start"
               variant={isActive ? "default" : "ghost"}
               asChild>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                className={cn(isActive && "hover:text-primary-foreground")}>
                 <Link href={path}>
                   <Icon />
                   {title}

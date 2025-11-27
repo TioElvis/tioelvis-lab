@@ -1,10 +1,10 @@
+import { auth } from "@/auth";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-import { auth } from "@/lib/auth";
 import { SignOutButton } from "./sign-out-button";
 import { ModeToggle } from "@/components/mode-toggle";
 import { DashboardSidebarMenu } from "./dashboard-sidebar-menu";

@@ -1,3 +1,5 @@
+import { Fragment } from "react/jsx-runtime";
+
 export default function Page() {
-  return <div>Projects Page</div>;
+  return <Fragment>Projects Page</Fragment>;
 }
