@@ -36,6 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Languages, ProjectStatus } from "@prisma/client";
+import { useKeyboardAware } from "@/hooks/use-keyboard-aware";
 import { ProjectFormData, ProjectZodSchema } from "@/lib/schemas";
 import { CheckIcon, PlaneIcon, PlusIcon, XIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,6 +45,8 @@ export default function Page() {
   const [tag, setTag] = useState("");
 
   const router = useRouter();
+
+  const containerRef = useKeyboardAware();
 
   const form = useForm<ProjectFormData>({
     resolver: zodResolver(ProjectZodSchema),
@@ -121,12 +124,11 @@ export default function Page() {
   const onSubmit = form.handleSubmit((data) => mutation.mutate(data));
 
   return (
-    <main className="flex-1 py-8">
+    <main className="flex-1 py-8" ref={containerRef}>
       <Form {...form}>
         <form
           onSubmit={onSubmit}
-          className="grid grid-cols-1 xl:grid-cols-6 gap-4"
-        >
+          className="grid grid-cols-1 xl:grid-cols-6 gap-4">
           <section className="xl:col-span-3">
             <Card>
               <CardHeader>
@@ -244,8 +246,7 @@ export default function Page() {
                       <FormLabel>Status</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                        defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger className="w-full cursor-pointer">
                             <SelectValue placeholder="Select status" />
@@ -256,8 +257,7 @@ export default function Page() {
                             <SelectItem
                               className="cursor-pointer"
                               key={status as string}
-                              value={status as string}
-                            >
+                              value={status as string}>
                               {status}
                             </SelectItem>
                           ))}
@@ -288,11 +288,10 @@ export default function Page() {
                                     : "outline"
                                 }
                                 className="cursor-pointer"
-                                onClick={() => toggleLanguage(language.value)}
-                              >
+                                onClick={() => toggleLanguage(language.value)}>
                                 <span
                                   className={cn(
-                                    `w-3 h-3 rounded-full ${language.color}`,
+                                    `w-3 h-3 rounded-full ${language.color}`
                                   )}
                                 />
                                 {language.label}
@@ -323,8 +322,7 @@ export default function Page() {
                         <Button
                           type="button"
                           size="icon"
-                          onClick={() => toggleTag(tag)}
-                        >
+                          onClick={() => toggleTag(tag)}>
                           <PlusIcon />
                         </Button>
                       </TooltipTrigger>
@@ -340,8 +338,7 @@ export default function Page() {
                         <Badge
                           key={tag}
                           variant="secondary"
-                          className="text-sm"
-                        >
+                          className="text-sm">
                           {tag}
                           <button type="button" onClick={() => toggleTag(tag)}>
                             <XIcon className="w-4 h-4" />
@@ -370,8 +367,7 @@ export default function Page() {
             </Card>
             <Button
               className="w-full cursor-pointer"
-              disabled={mutation.isPending}
-            >
+              disabled={mutation.isPending}>
               {mutation.isPending ? (
                 "Creating..."
               ) : (

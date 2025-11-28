@@ -24,8 +24,6 @@ export const project_router = j.router({
       const { page, limit, search, languages } = input;
       const skip = (page - 1) * limit;
 
-      console.log(languages);
-
       const where = {
         AND: [
           search
