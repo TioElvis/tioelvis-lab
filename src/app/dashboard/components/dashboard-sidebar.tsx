@@ -28,7 +28,7 @@ export function DashboardSidebar() {
   return (
     <Sidebar variant="inset">
       <SidebarHeader className="gap-0">
-        <h2 className="text-xl font-bold text-primary">TioElvis Lab</h2>
+        <h4 className="text-primary font-bold">TioElvis Lab</h4>
         <p className="text-xs text-muted-foreground">Dashboard</p>
       </SidebarHeader>
       <SidebarContent className="py-6 px-2 lg:px-0">
@@ -57,8 +57,7 @@ export function DashboardSidebar() {
                 <Button
                   className="justify-start"
                   variant={isActive ? "default" : "ghost"}
-                  asChild
-                >
+                  asChild>
                   <SidebarMenuButton asChild>
                     <Link href={path} onClick={() => setOpenMobile(false)}>
                       <Icon />
