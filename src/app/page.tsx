@@ -52,7 +52,6 @@ export default function Page() {
           <Button className="px-8 py-4 h-12" asChild>
             <Link href="/projects">Explore Projects</Link>
           </Button>
-          <hr />
           <div className="grid grid-cols-3 gap-6">
             {[
               { name: "Projects Built", value: "0" },
@@ -109,8 +108,7 @@ export default function Page() {
               ].map((section, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-2 text-muted-foreground"
-                >
+                  className="flex items-center gap-2 text-muted-foreground">
                   <FolderIcon className="w-4 h-4" />
                   <span>{section}</span>
                 </div>
@@ -144,8 +142,7 @@ export default function Page() {
           ].map((item, i) => (
             <Card
               key={i}
-              className="relative p-8 rounded-2xl bg-card/50 backdrop-blur-sm border border-border hover:border-primary/50 transition-all group"
-            >
+              className="relative p-8 rounded-2xl bg-card/50 backdrop-blur-sm border border-border hover:border-primary/50 transition-all group">
               <CardHeader className="absolute bg-primary rounded-full -top-4 -left-4 w-12 h-12 flex items-center justify-center text-primary-foreground font-heading font-bold shadow-glow-primary">
                 <CardTitle>{item.step}</CardTitle>
               </CardHeader>

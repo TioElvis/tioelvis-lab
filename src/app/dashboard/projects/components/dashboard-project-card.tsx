@@ -24,8 +24,7 @@ export function DashboardProjectCard(project: Readonly<Project>) {
           <div className="flex items-center gap-4">
             <Badge
               variant="secondary"
-              className={cn(project.status === "PUBLISHED" && "bg-green-800")}
-            >
+              className={cn(project.status === "PUBLISHED" && "bg-green-800")}>
               {project.status}
             </Badge>
             {project.featured && <Badge>Featured</Badge>}
@@ -34,20 +33,24 @@ export function DashboardProjectCard(project: Readonly<Project>) {
         <CardDescription>{project.description}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {project.languages.map((language) => {
-          const v = LANGUAGES.find((e) => e.value === language)!;
-          return (
-            <Badge key={language} variant="secondary">
-              <span className={cn(`w-3 h-3 rounded-full ${v.color}`)} />
-              {v.label}
+        <div className="flex flex-wrap gap-2">
+          {project.languages.map((language) => {
+            const v = LANGUAGES.find((e) => e.value === language)!;
+            return (
+              <Badge key={language} variant="secondary">
+                <span className={cn(`w-3 h-3 rounded-full ${v.color}`)} />
+                {v.label}
+              </Badge>
+            );
+          })}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {project.tags.map((tag) => (
+            <Badge key={tag} variant="secondary">
+              #{tag}
             </Badge>
-          );
-        })}
-        {project.tags.map((tag) => (
-          <Badge key={tag} variant="secondary">
-            #{tag}
-          </Badge>
-        ))}
+          ))}
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-2 items-start">
         <p className="text-xs text-muted-foreground">
@@ -59,8 +62,7 @@ export function DashboardProjectCard(project: Readonly<Project>) {
         <Button
           asChild
           variant="secondary"
-          className="w-full group-hover:text-primary"
-        >
+          className="w-full group-hover:text-primary">
           <Link href={`/dashboard/project/${project.slug}`}>
             Edit Project
             <EditIcon className="h-4 w-4" />
