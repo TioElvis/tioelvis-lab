@@ -1,17 +1,29 @@
-import { auth } from "@/auth";
+"use client";
+import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
-import { SignOutButton } from "./sign-out-button";
+import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
-import { DashboardSidebarMenu } from "./dashboard-sidebar-menu";
+import { SignOutButton } from "@/components/sign-out-button";
+import { FoldersIcon, HomeIcon, PlusIcon } from "lucide-react";
 
-export async function DashboardSidebar() {
-  const session = await auth();
-  const user = session?.user;
+export function DashboardSidebar() {
+  const session = useSession();
+  const user = session.data?.user;
+
+  const { setOpenMobile } = useSidebar();
+
+  const pathname = usePathname();
 
   return (
     <Sidebar variant="inset">
@@ -20,7 +32,44 @@ export async function DashboardSidebar() {
         <p className="text-xs text-muted-foreground">Dashboard</p>
       </SidebarHeader>
       <SidebarContent className="py-6 px-2 lg:px-0">
-        <DashboardSidebarMenu />
+        <SidebarMenu className="space-y-2">
+          {[
+            {
+              title: "Dashboard",
+              path: "/dashboard",
+              Icon: HomeIcon,
+            },
+            {
+              title: "All Projects",
+              path: "/dashboard/projects",
+              Icon: FoldersIcon,
+            },
+            {
+              title: "New Project",
+              path: "/dashboard/projects/new",
+              Icon: PlusIcon,
+            },
+          ].map(({ title, path, Icon }) => {
+            const isActive = pathname === path;
+
+            return (
+              <SidebarMenuItem key={title}>
+                <Button
+                  className="justify-start"
+                  variant={isActive ? "default" : "ghost"}
+                  asChild
+                >
+                  <SidebarMenuButton asChild>
+                    <Link href={path} onClick={() => setOpenMobile(false)}>
+                      <Icon />
+                      {title}
+                    </Link>
+                  </SidebarMenuButton>
+                </Button>
+              </SidebarMenuItem>
+            );
+          })}
+        </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
         <div>

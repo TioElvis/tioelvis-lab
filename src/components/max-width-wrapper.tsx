@@ -12,9 +12,10 @@ export function MaxWidthWrapper({
     <div
       className={cn(
         "h-full mx-auto w-full max-w-7xl px-12 md:px-20",
-        className
+        className,
       )}
-      {...props}>
+      {...props}
+    >
       {children}
     </div>
   );

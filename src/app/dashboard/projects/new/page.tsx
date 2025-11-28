@@ -1,5 +1,5 @@
 "use client";
-import z from "zod";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -9,7 +9,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   Select,
   SelectContent,
@@ -20,12 +24,11 @@ import {
 import { cn } from "@/lib/utils";
 import { client } from "@/lib/client";
 import { Fragment, useState } from "react";
-import { LANGUAGES } from "@/lib/constants";
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { LANGUAGES } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
-import { ProjectSchema } from "@/lib/schemas";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useMutation } from "@tanstack/react-query";
@@ -33,17 +36,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Languages, ProjectStatus } from "@prisma/client";
+import { ProjectFormData, ProjectZodSchema } from "@/lib/schemas";
 import { CheckIcon, PlaneIcon, PlusIcon, XIcon } from "lucide-react";
-import { DashboardHeader } from "@/app/dashboard/components/dashboard-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Page() {
-  const [inputTag, setInputTag] = useState("");
+  const [tag, setTag] = useState("");
 
   const router = useRouter();
 
-  const form = useForm({
-    resolver: zodResolver(ProjectSchema),
+  const form = useForm<ProjectFormData>({
+    resolver: zodResolver(ProjectZodSchema),
     defaultValues: {
       title: "",
       slug: "",
@@ -55,47 +58,49 @@ export default function Page() {
       status: ProjectStatus.DRAFT,
       featured: false,
     },
+    mode: "onSubmit",
   });
 
-  const watchedLanguages = useWatch({
+  const languages = useWatch({
     control: form.control,
     name: "languages",
     defaultValue: [],
   });
 
-  const watchedTags = useWatch({
+  const toggleLanguage = (language: Languages) => {
+    let current = languages;
+
+    if (current.includes(language)) {
+      current = current.filter((e) => e !== language);
+    } else {
+      form.clearErrors("languages");
+      current.push(language);
+    }
+
+    form.setValue("languages", current);
+  };
+
+  const tags = useWatch({
     control: form.control,
     name: "tags",
     defaultValue: [],
   });
 
-  const addTag = (rawTag: string) => {
-    const tag = rawTag.trim();
-    if (tag.length === 0) return;
+  const toggleTag = (tag: string) => {
+    let current = tags || [];
 
-    const currentTags: string[] = form.getValues("tags") || [];
-    const lower = tag.toLowerCase();
-    const hasDuplicate = currentTags.some((t) => t.toLowerCase() === lower);
-    if (hasDuplicate) return;
+    if (current?.includes(tag.toLowerCase())) {
+      current = current.filter((e) => e !== tag.toLowerCase());
+    } else {
+      current.push(tag.toLowerCase());
+    }
 
-    form.setValue("tags", [...currentTags, tag], {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-    setInputTag("");
-  };
-
-  const removeTag = (tagToRemove: string) => {
-    const currentTags: string[] = form.getValues("tags") || [];
-    form.setValue(
-      "tags",
-      currentTags.filter((t) => t !== tagToRemove),
-      { shouldDirty: true, shouldValidate: true }
-    );
+    setTag("");
+    form.setValue("tags", current);
   };
 
   const mutation = useMutation({
-    mutationFn: async (values: z.infer<typeof ProjectSchema>) => {
+    mutationFn: async (values: ProjectFormData) => {
       const response = await client.project.create.$post(values);
 
       if (!response.ok) {
@@ -116,20 +121,13 @@ export default function Page() {
   const onSubmit = form.handleSubmit((data) => mutation.mutate(data));
 
   return (
-    <section className="flex flex-col gap-8">
-      <DashboardHeader>
-        <div>
-          <h1 className="text-xl md:text-3xl font-bold">Create New Project</h1>
-          <p className="text-muted-foreground mt-1">
-            Add a new technical project
-          </p>
-        </div>
-      </DashboardHeader>
+    <main className="flex-1 py-8">
       <Form {...form}>
         <form
-          className="flex-1 space-y-8 xl:grid xl:grid-cols-6 xl:gap-8 xl:space-y-0"
-          onSubmit={onSubmit}>
-          <section className="xl:col-span-4">
+          onSubmit={onSubmit}
+          className="grid grid-cols-1 xl:grid-cols-6 gap-4"
+        >
+          <section className="xl:col-span-3">
             <Card>
               <CardHeader>
                 <CardTitle>Project Details</CardTitle>
@@ -181,7 +179,7 @@ export default function Page() {
                         <FormControl>
                           <Textarea
                             className="min-h-72"
-                            placeholder="Describe the project"
+                            placeholder="A REST API built with Express.js and TypeScript, featuring JWT authentication, CRUD operations, and comprehensive documentation."
                             {...field}
                           />
                         </FormControl>
@@ -232,7 +230,7 @@ export default function Page() {
               </CardContent>
             </Card>
           </section>
-          <section className="xl:col-span-2 space-y-8">
+          <section className="xl:col-span-2 space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Metadata</CardTitle>
@@ -246,7 +244,8 @@ export default function Page() {
                       <FormLabel>Status</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}>
+                        defaultValue={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger className="w-full cursor-pointer">
                             <SelectValue placeholder="Select status" />
@@ -257,7 +256,8 @@ export default function Page() {
                             <SelectItem
                               className="cursor-pointer"
                               key={status as string}
-                              value={status as string}>
+                              value={status as string}
+                            >
                               {status}
                             </SelectItem>
                           ))}
@@ -273,41 +273,40 @@ export default function Page() {
                 <FormField
                   control={form.control}
                   name="languages"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Languages</FormLabel>
-                      <div className="flex flex-wrap gap-2">
-                        {LANGUAGES.map((lang) => (
-                          <Badge
-                            key={lang.value}
-                            variant={
-                              field.value?.includes(lang.value)
-                                ? "secondary"
-                                : "outline"
-                            }
-                            className="cursor-pointer flex gap-2"
-                            onClick={() => {
-                              const current = field.value || [];
-                              const updated = current.includes(lang.value)
-                                ? current.filter((l) => l !== lang.value)
-                                : [...current, lang.value];
-                              field.onChange(updated);
-                            }}>
-                            <span
-                              className={cn(
-                                `inline-block h-3 w-3 rounded-full ${lang.color}`
-                              )}
-                            />
-                            {lang.label}
-                            {watchedLanguages.includes(
-                              lang.value as Languages
-                            ) && <CheckIcon />}
-                          </Badge>
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={() => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Languages</FormLabel>
+                        <div className="flex flex-wrap gap-2">
+                          {LANGUAGES.map((language) => {
+                            return (
+                              <Badge
+                                key={language.value}
+                                variant={
+                                  languages.includes(language.value)
+                                    ? "secondary"
+                                    : "outline"
+                                }
+                                className="cursor-pointer"
+                                onClick={() => toggleLanguage(language.value)}
+                              >
+                                <span
+                                  className={cn(
+                                    `w-3 h-3 rounded-full ${language.color}`,
+                                  )}
+                                />
+                                {language.label}
+                                {languages.includes(language.value) && (
+                                  <CheckIcon className="ml-1 w-4 h-4" />
+                                )}
+                              </Badge>
+                            );
+                          })}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
                 <div className="space-y-2">
                   <Label htmlFor="tag">Tags</Label>
@@ -316,42 +315,39 @@ export default function Page() {
                       id="tag"
                       name="tag"
                       placeholder="Add tag and press Enter or click +"
-                      value={inputTag}
-                      onChange={(e) => setInputTag(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          addTag(inputTag);
-                        }
-                      }}
-                      aria-describedby="tags-help"
+                      value={tag}
+                      onChange={(e) => setTag(e.target.value)}
                     />
-                    <Button
-                      type="button"
-                      size="icon"
-                      onClick={() => addTag(inputTag)}
-                      className="cursor-pointer"
-                      aria-label="Add tag">
-                      <PlusIcon />
-                    </Button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          type="button"
+                          size="icon"
+                          onClick={() => toggleTag(tag)}
+                        >
+                          <PlusIcon />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Add tag</TooltipContent>
+                    </Tooltip>
                   </div>
                   <p id="tags-help" className="text-sm text-muted-foreground">
                     Tags are case-insensitive and duplicates are ignored.
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    {watchedTags?.map((tag: string) => {
-                      return (
-                        <div
+                  <div className="flex flex-wrap gap-4">
+                    {tags &&
+                      tags.map((tag) => (
+                        <Badge
                           key={tag}
-                          className="inline-flex items-center space-x-2 rounded-full bg-muted px-3 py-1 text-sm">
-                          <span>{tag}</span>
-                          <XIcon
-                            className="w-4 h-4 cursor-pointer"
-                            onClick={() => removeTag(tag)}
-                          />
-                        </div>
-                      );
-                    })}
+                          variant="secondary"
+                          className="text-sm"
+                        >
+                          {tag}
+                          <button type="button" onClick={() => toggleTag(tag)}>
+                            <XIcon className="w-4 h-4" />
+                          </button>
+                        </Badge>
+                      ))}
                   </div>
                 </div>
                 <hr />
@@ -363,7 +359,6 @@ export default function Page() {
                       <FormLabel>Feature this project</FormLabel>
                       <FormControl>
                         <Switch
-                          className="cursor-pointer"
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />
@@ -375,7 +370,8 @@ export default function Page() {
             </Card>
             <Button
               className="w-full cursor-pointer"
-              disabled={mutation.isPending}>
+              disabled={mutation.isPending}
+            >
               {mutation.isPending ? (
                 "Creating..."
               ) : (
@@ -387,6 +383,6 @@ export default function Page() {
           </section>
         </form>
       </Form>
-    </section>
+    </main>
   );
 }

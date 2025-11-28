@@ -20,29 +20,24 @@ export function ModeToggle({ className, ...props }: Props) {
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
-          className={cn(`cursor-pointer`, className)}
+          className={cn(className)}
           variant="outline"
           size="icon"
-          {...props}>
+          {...props}
+        >
           <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
           <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center">
-        <DropdownMenuItem
-          className="cursor-pointer"
-          onClick={() => setTheme("light")}>
+      <DropdownMenuContent className="w-full" align="center">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="cursor-pointer"
-          onClick={() => setTheme("dark")}>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="cursor-pointer"
-          onClick={() => setTheme("system")}>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
           System
         </DropdownMenuItem>
       </DropdownMenuContent>

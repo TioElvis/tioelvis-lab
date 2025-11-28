@@ -1,5 +1,3 @@
-import { Fragment } from "react/jsx-runtime";
-
 export default function Page() {
-  return <Fragment>Dashboard Page</Fragment>;
+  return <main className="flex-1"></main>;
 }

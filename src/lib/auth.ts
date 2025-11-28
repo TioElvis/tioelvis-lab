@@ -26,25 +26,21 @@ export const { auth, handlers } = NextAuth({
 
         const isPasswordValid = await bcrypt.compare(
           credentials.password as string,
-          user.password
+          user.password,
         );
 
         if (!isPasswordValid) {
           return null;
         }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: null,
-        };
+        return { ...user };
       },
     }),
   ],
   pages: {
     signIn: "/auth/sign-in",
     error: "/auth/sign-in",
+    signOut: "/",
   },
   session: {
     strategy: "jwt",

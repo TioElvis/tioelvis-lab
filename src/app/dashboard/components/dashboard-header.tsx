@@ -1,33 +1,28 @@
 "use client";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { TextAlignJustifyIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { AlignJustifyIcon } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
-import { ComponentProps, PropsWithChildren } from "react";
 
-interface Props extends PropsWithChildren<ComponentProps<"header">> {
-  children: React.ReactNode;
-}
+export function DashboardHeader() {
+  const pathname = usePathname();
+  const { toggleSidebar } = useSidebar();
 
-export function DashboardHeader({
-  className,
-  children,
-  ...props
-}: Readonly<Props>) {
-  const { toggleSidebar, isMobile } = useSidebar();
+  const lastSegment = pathname?.split("/").filter(Boolean).pop() ?? "";
+  const title =
+    lastSegment === ""
+      ? "Dashboard"
+      : lastSegment
+          .replace(/[-_]/g, " ")
+          .split(" ")
+          .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+          .join(" ");
 
   return (
-    <header className={cn("flex items-center gap-8", className)} {...props}>
-      {isMobile && (
-        <Button
-          variant="outline"
-          size="icon"
-          className="cursor-pointer"
-          onClick={toggleSidebar}>
-          <TextAlignJustifyIcon />
-        </Button>
-      )}
-      {children}
+    <header className="flex items-center gap-4">
+      <button onClick={() => toggleSidebar()}>
+        <AlignJustifyIcon className="w-8 h-8 md:w-12 md:h-12" />
+      </button>
+      <h1>{title}</h1>
     </header>
   );
 }

@@ -1,5 +1,4 @@
 "use client";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -23,21 +22,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const schema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(6, {
-    message: "Password must be at least 6 characters.",
-  }),
-});
+import { SignInFormData, SignInZodSchema } from "@/lib/schemas";
 
 export default function SignInPage() {
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+  const form = useForm<SignInFormData>({
+    resolver: zodResolver(SignInZodSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -45,10 +36,9 @@ export default function SignInPage() {
   });
 
   const mutation = useMutation({
-    mutationFn: async (values: z.infer<typeof schema>) => {
+    mutationFn: async (values: SignInFormData) => {
       const result = await signIn("credentials", {
-        email: values.email,
-        password: values.password,
+        ...values,
         redirect: false,
       });
 
@@ -68,9 +58,7 @@ export default function SignInPage() {
     },
   });
 
-  const onSubmit = form.handleSubmit((values) => {
-    mutation.mutate(values);
-  });
+  const onSubmit = form.handleSubmit((values) => mutation.mutate(values));
 
   return (
     <main className="flex min-h-screen items-center justify-center p-4">
@@ -119,9 +107,7 @@ export default function SignInPage() {
                   </FormItem>
                 )}
               />
-              <Button
-                className="w-full cursor-pointer"
-                disabled={mutation.isPending}>
+              <Button className="w-full" disabled={mutation.isPending}>
                 {mutation.isPending ? "Signing in..." : "Sign in"}
               </Button>
             </form>
