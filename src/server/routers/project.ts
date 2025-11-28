@@ -1,4 +1,6 @@
+import z from "zod";
 import { db } from "@/lib/db";
+import { HTTPException } from "hono/http-exception";
 import { j, private_procedure, public_procedure } from "../jstack";
 import { ProjectListZodSchema, ProjectZodSchema } from "@/lib/schemas";
 
@@ -59,5 +61,48 @@ export const project_router = j.router({
           totalPages: Math.ceil(total / limit),
         },
       });
+    }),
+
+  getBySlug: public_procedure
+    .input(z.object({ slug: z.string() }))
+    .get(async ({ c, input }) => {
+      const { slug } = input;
+
+      const project = await db.project.findUnique({
+        where: { slug },
+        include: { author: { select: { name: true } } },
+      });
+
+      if (!project) {
+        throw new HTTPException(404, { message: "Project not found" });
+      }
+
+      return c.superjson(project);
+    }),
+
+  update: private_procedure
+    .input(z.object({ id: z.string() }).merge(ProjectZodSchema.partial()))
+    .mutation(async ({ ctx, input, c }) => {
+      const { user } = ctx;
+      const { ...data } = input;
+
+      const project = await db.project.findUnique({
+        where: { id: data.id },
+      });
+
+      if (!project) {
+        throw new HTTPException(404, { message: "Project not found" });
+      }
+
+      if (project.author_id !== user.id) {
+        throw new HTTPException(403, { message: "Forbidden" });
+      }
+
+      const updatedProject = await db.project.update({
+        where: { id: data.id },
+        data,
+      });
+
+      return c.superjson(updatedProject);
     }),
 });

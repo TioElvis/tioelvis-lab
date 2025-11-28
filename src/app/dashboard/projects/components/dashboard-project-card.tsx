@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -6,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { EditIcon } from "lucide-react";
 import { Project } from "@prisma/client";
@@ -63,7 +63,7 @@ export function DashboardProjectCard(project: Readonly<Project>) {
           asChild
           variant="secondary"
           className="w-full group-hover:text-primary">
-          <Link href={`/dashboard/project/${project.slug}`}>
+          <Link href={`/dashboard/projects/${project.slug}`}>
             Edit Project
             <EditIcon className="h-4 w-4" />
           </Link>
