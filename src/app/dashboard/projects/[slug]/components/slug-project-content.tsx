@@ -3,10 +3,10 @@ import { toast } from "sonner";
 import { client } from "@/lib/client";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProjectForm } from "../../components/project-form";
 import { ProjectFormData, ProjectZodSchema } from "@/lib/schemas";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   project_id: string;
@@ -21,6 +21,7 @@ export function SlugProjectContent({ project_id, defaultValues }: Props) {
   });
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (values: ProjectFormData) => {
@@ -36,8 +37,10 @@ export function SlugProjectContent({ project_id, defaultValues }: Props) {
       return await response.json();
     },
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["project"] });
+
       toast.success("Project updated successfully");
-      router.push(`/dashboard/projects/${data.slug}`);
+      router.replace(`/dashboard/projects/${data.slug}`);
     },
     onError: (error) => {
       toast.error(error.message);
