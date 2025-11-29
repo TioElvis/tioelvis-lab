@@ -18,7 +18,7 @@ export function DashboardHeader() {
           .join(" ");
 
   return (
-    <header className="flex items-center gap-4">
+    <header className="flex items-center gap-4 sticky top-0 py-4 bg-background">
       <button onClick={() => toggleSidebar()}>
         <AlignJustifyIcon className="w-8 h-8 md:w-12 md:h-12" />
       </button>
