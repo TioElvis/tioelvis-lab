@@ -1,5 +1,4 @@
 "use client";
-import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -36,74 +35,43 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { client } from "@/lib/client";
 import { Section } from "@prisma/client";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { UseFormReturn } from "react-hook-form";
 import { ICONS_OPTIONS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { SectionFormData } from "@/lib/schemas";
 import { Fragment, useEffect, useState } from "react";
-import { SectionFormData, SectionZodSchema } from "@/lib/schemas";
 import { PlusIcon, SectionIcon, ChevronsUpDown, CheckIcon } from "lucide-react";
 
 interface Props {
-  project_id: string;
   list_sections: Array<Section>;
+  dialog: boolean;
+  setDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  form: UseFormReturn<SectionFormData>;
+  onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
+  isSubmitting: boolean;
+  submitButtonText?: string;
+  submitButtonLoadingText?: string;
 }
 
 export function SectionDialogForm({
-  project_id,
   list_sections,
+  dialog,
+  setDialog,
+  form,
+  onSubmit,
+  isSubmitting,
+  submitButtonText = "Create Section",
+  submitButtonLoadingText = "Creating...",
 }: Readonly<Props>) {
-  const [dialog, setDialog] = useState(false);
   const [openCombobox, setOpenCombobox] = useState(false);
-
-  const router = useRouter();
-
-  const form = useForm<SectionFormData>({
-    resolver: zodResolver(SectionZodSchema),
-    defaultValues: {
-      title: "",
-      slug: "",
-      icon: undefined,
-      parent_id: null,
-    },
-  });
 
   useEffect(() => {
     if (!dialog) {
       form.reset();
     }
   }, [form, dialog]);
-
-  const mutation = useMutation({
-    mutationFn: async (data: SectionFormData) => {
-      const response = await client.section.create.$post({
-        project_id,
-        ...data,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create section");
-      }
-
-      return await response.json();
-    },
-    onSuccess: () => {
-      form.reset();
-      setDialog(false);
-      toast.success("Section created successfully!");
-      router.refresh();
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
-  const onSubmit = (data: SectionFormData) => mutation.mutate(data);
 
   return (
     <Dialog open={dialog} onOpenChange={setDialog}>
@@ -123,7 +91,7 @@ export function SectionDialogForm({
         </DialogHeader>
         <hr />
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={onSubmit} className="space-y-8">
             <FormField
               control={form.control}
               name="title"
@@ -271,11 +239,12 @@ export function SectionDialogForm({
               }}
             />
             <Button type="submit" className="w-full">
-              {mutation.isPending ? (
-                "Creating..."
+              {isSubmitting ? (
+                submitButtonLoadingText
               ) : (
                 <Fragment>
-                  Create Section <SectionIcon />
+                  {submitButtonText}
+                  <SectionIcon />
                 </Fragment>
               )}
             </Button>

@@ -1,7 +1,7 @@
-import { SectionCard } from "./section-card";
 import { Fragment } from "react/jsx-runtime";
+import { SectionCard } from "./section-card";
 import { Project, Section } from "@prisma/client";
-import { SectionDialogForm } from "./section-dialog-form";
+import { CreateSectionButton } from "./create-section-button";
 
 interface Props {
   project: Readonly<Project & { sections: Readonly<Section>[] }>;
@@ -29,7 +29,7 @@ export function SectionsContent({ project }: Props) {
           </Fragment>
         )}
       </div>
-      <SectionDialogForm project_id={project.id} list_sections={sections} />
+      <CreateSectionButton list_sections={sections} project_id={project.id} />
     </section>
   );
 }
