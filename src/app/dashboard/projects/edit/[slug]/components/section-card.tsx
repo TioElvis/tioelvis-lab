@@ -1,14 +1,21 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Section } from "@prisma/client";
-import { Button } from "@/components/ui/button";
-import { EditIcon, EyeIcon } from "lucide-react";
+import { EditSectionButton } from "./edit-section-button";
+import { EditSectionContentButton } from "./edit-content-section-button";
 
-export function SectionCard(section: Readonly<Section>) {
+interface Props {
+  section: Section;
+  list_sections: Array<Section>;
+  project_id: string;
+  project_slug: string;
+}
+
+export function SectionCard({
+  section,
+  list_sections,
+  project_id,
+  project_slug,
+}: Readonly<Props>) {
   const isChild = section.parent_id !== null;
 
   return (
@@ -39,22 +46,15 @@ export function SectionCard(section: Readonly<Section>) {
           </div>
         </div>
         <div className="flex gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline" size="icon-sm">
-                <EyeIcon />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>View Content</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="outline" size="icon-sm">
-                <EditIcon />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Edit Section</TooltipContent>
-          </Tooltip>
+          <EditSectionContentButton
+            project_slug={project_slug}
+            section_slug={section.slug}
+          />
+          <EditSectionButton
+            list_sections={list_sections}
+            project_id={project_id}
+            section={section}
+          />
         </div>
       </div>
     </article>

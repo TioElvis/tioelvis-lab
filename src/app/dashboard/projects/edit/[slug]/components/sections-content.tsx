@@ -24,7 +24,15 @@ export function SectionsContent({ project }: Props) {
         {project.sections.length > 0 && (
           <Fragment>
             {project.sections.map((section) => {
-              return <SectionCard key={section.id} {...section} />;
+              return (
+                <SectionCard
+                  key={section.id}
+                  section={section}
+                  list_sections={sections}
+                  project_id={project.id}
+                  project_slug={project.slug}
+                />
+              );
             })}
           </Fragment>
         )}

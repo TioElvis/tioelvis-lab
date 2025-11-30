@@ -13,7 +13,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Popover,
@@ -42,7 +41,7 @@ import { ICONS_OPTIONS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { SectionFormData } from "@/lib/schemas";
 import { Fragment, useEffect, useState } from "react";
-import { PlusIcon, SectionIcon, ChevronsUpDown, CheckIcon } from "lucide-react";
+import { SectionIcon, ChevronsUpDown, CheckIcon } from "lucide-react";
 
 interface Props {
   list_sections: Array<Section>;
@@ -75,12 +74,6 @@ export function SectionDialogForm({
 
   return (
     <Dialog open={dialog} onOpenChange={setDialog}>
-      <DialogTrigger asChild>
-        <Button className="flex-1 xl:col-span-1">
-          Add Section
-          <PlusIcon className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
       <DialogContent className="max-w-96">
         <DialogHeader>
           <DialogTitle>Create New Section</DialogTitle>
