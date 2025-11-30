@@ -41,16 +41,15 @@ export default function Page() {
   });
 
   const toggleLanguage = (language: Languages) => {
-    let current = languages;
-
-    if (current.includes(language)) {
-      current = current.filter((e) => e !== language);
-    } else {
-      current.push(language);
-    }
-
     setPage(1);
-    setLanguages(current);
+
+    setLanguages((current) => {
+      if (current.includes(language)) {
+        return current.filter((e) => e !== language);
+      } else {
+        return [...current, language];
+      }
+    });
   };
 
   return (
@@ -61,8 +60,7 @@ export default function Page() {
             <Toggle
               variant="outline"
               key={language.value}
-              onClick={() => toggleLanguage(language.value)}
-            >
+              onClick={() => toggleLanguage(language.value)}>
               <span className={cn(`w-3 h-3 rounded-full ${language.color}`)} />
               {language.label}
             </Toggle>
