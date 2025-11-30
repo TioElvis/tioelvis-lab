@@ -20,7 +20,9 @@ export function DashboardProjectCard(project: Readonly<Project>) {
     <Card className="justify-between transition-all group">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>{project.title}</CardTitle>
+          <CardTitle className="group-hover:text-primary">
+            {project.title}
+          </CardTitle>
           <div className="flex items-center gap-4">
             <Badge
               variant="secondary"

@@ -20,7 +20,7 @@ export default async function Layout({ children }: Readonly<Props>) {
       <DashboardSidebar />
       <SidebarInset className="p-8">
         <DashboardHeader />
-        {children}
+        <main className="flex-1 space-y-4 py-4">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

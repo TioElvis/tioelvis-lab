@@ -19,7 +19,7 @@ export default async function Page({ params }: Readonly<Props>) {
   const project = await response.json();
 
   return (
-    <Tabs defaultValue="details" className="flex-1 py-4">
+    <Tabs defaultValue="details">
       <TabsList>
         <TabsTrigger value="details">Details</TabsTrigger>
         <TabsTrigger value="sections">Sections</TabsTrigger>

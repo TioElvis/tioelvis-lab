@@ -92,12 +92,12 @@ export function ProjectForm({
   };
 
   return (
-    <main className="flex-1 py-4" ref={containerRef}>
+    <section className="flex-1 py-4" ref={containerRef}>
       <Form {...form}>
         <form
           onSubmit={onSubmit}
           className="grid grid-cols-1 xl:grid-cols-6 gap-4">
-          <section className="xl:col-span-3">
+          <div className="xl:col-span-3">
             <Card>
               <CardHeader>
                 <CardTitle>Project Details</CardTitle>
@@ -199,8 +199,8 @@ export function ProjectForm({
                 </div>
               </CardContent>
             </Card>
-          </section>
-          <section className="xl:col-span-2 space-y-4">
+          </div>
+          <div className="xl:col-span-2 space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Metadata</CardTitle>
@@ -348,9 +348,9 @@ export function ProjectForm({
                 </Fragment>
               )}
             </Button>
-          </section>
+          </div>
         </form>
       </Form>
-    </main>
+    </section>
   );
 }

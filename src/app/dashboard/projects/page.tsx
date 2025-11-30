@@ -2,9 +2,9 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { client } from "@/lib/client";
-import { SearchIcon } from "lucide-react";
 import { Languages } from "@prisma/client";
 import { Fragment, useState } from "react";
+import { useRouter } from "next/navigation";
 import { LANGUAGES } from "@/lib/constants";
 import { Input } from "@/components/ui/input";
 import { Toggle } from "@/components/ui/toggle";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DashboardProjectCard } from "./components/dashboard-project-card";
 
@@ -21,6 +22,8 @@ export default function Page() {
   const [languages, setLanguages] = useState<Array<Languages>>([]);
 
   const search = useDebounce(input, 500);
+
+  const router = useRouter();
 
   const query = useQuery({
     queryKey: ["projects", page, search, languages],
@@ -52,8 +55,12 @@ export default function Page() {
     });
   };
 
+  const totalPages = query.data?.pagination.totalPages || 1;
+  const canGoPrevious = page > 1;
+  const canGoNext = page < totalPages;
+
   return (
-    <main className="flex-1 py-8 space-y-4">
+    <Fragment>
       <div className="flex flex-wrap gap-4">
         {LANGUAGES.map((language) => {
           return (
@@ -68,7 +75,7 @@ export default function Page() {
         })}
       </div>
       <div className="relative">
-        <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4" />
+        <Search className="absolute left-2.5 top-2.5 h-4 w-4" />
         <Input
           placeholder="Search projects..."
           className="pl-8"
@@ -82,7 +89,7 @@ export default function Page() {
       {query.error && (
         <div className="grid place-content-center my-24">
           <p className="text-destructive mb-4">Failed to load projects</p>
-          <Button variant="outline" onClick={() => window.location.reload()}>
+          <Button variant="outline" onClick={() => router.refresh()}>
             Try Again
           </Button>
         </div>
@@ -128,6 +135,29 @@ export default function Page() {
           </Button>
         </div>
       )}
-    </main>
+      {query.data && query.data.projects.length > 0 && (
+        <div className="flex items-center justify-center gap-4">
+          <Button
+            variant="outline"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={!canGoPrevious || query.isLoading}>
+            <ChevronLeft />
+            Previous
+          </Button>
+          <div className="flex items-center">
+            <span className="text-sm text-muted-foreground">
+              Page {page} of {totalPages}
+            </span>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={!canGoNext || query.isLoading}>
+            Next
+            <ChevronRight />
+          </Button>
+        </div>
+      )}
+    </Fragment>
   );
 }
