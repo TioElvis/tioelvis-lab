@@ -92,7 +92,7 @@ export function ProjectForm({
   };
 
   return (
-    <main className="flex-1 py-8" ref={containerRef}>
+    <main className="flex-1 py-4" ref={containerRef}>
       <Form {...form}>
         <form
           onSubmit={onSubmit}
