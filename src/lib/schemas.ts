@@ -50,3 +50,24 @@ export const ProjectListZodSchema = z.object({
 });
 
 export type ProjectListData = z.infer<typeof ProjectListZodSchema>;
+
+export const SectionZodSchema = z.object({
+  title: z.string().min(1, "Insert the title for the section."),
+  slug: z
+    .string()
+    .min(1, "Insert the slug for the section.")
+    .transform((val) =>
+      val
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/[^\w\-]/g, "")
+        .replace(/\-\-+/g, "-")
+        .replace(/^-+/, "")
+        .replace(/-+$/, "")
+    ),
+  icon: z.string({ error: "Select an icon for the section." }),
+  parent_id: z.string().nullable().optional(),
+});
+
+export type SectionFormData = z.infer<typeof SectionZodSchema>;

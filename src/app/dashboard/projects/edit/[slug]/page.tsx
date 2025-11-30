@@ -7,14 +7,12 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function Page({ params }: Readonly<Props>) {
   const { slug } = await params;
 
   const response = await client.project.getBySlug.$get({ slug });
-
-  if (!response.ok) {
-    return <div className="py-4">Failed to load project.</div>;
-  }
 
   const project = await response.json();
 

@@ -1,14 +1,17 @@
-import { PlusIcon } from "lucide-react";
 import { SectionCard } from "./section-card";
 import { Fragment } from "react/jsx-runtime";
-import { Button } from "@/components/ui/button";
 import { Project, Section } from "@prisma/client";
+import { SectionDialogForm } from "./section-dialog-form";
 
 interface Props {
   project: Readonly<Project & { sections: Readonly<Section>[] }>;
 }
 
 export function SectionsContent({ project }: Props) {
+  const sections = project.sections.filter(
+    (section) => section.parent_id === null
+  );
+
   return (
     <section className="py-4 flex flex-col-reverse xl:grid xl:grid-cols-8 gap-4">
       <div className="flex-1 xl:col-span-7 space-y-2">
@@ -26,10 +29,7 @@ export function SectionsContent({ project }: Props) {
           </Fragment>
         )}
       </div>
-      <Button className="flex-1 xl:col-span-1 h-fit">
-        Add Section
-        <PlusIcon />
-      </Button>
+      <SectionDialogForm project_id={project.id} list_sections={sections} />
     </section>
   );
 }

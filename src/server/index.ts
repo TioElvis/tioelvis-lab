@@ -1,5 +1,6 @@
 import { j } from "./jstack";
 import { project_router } from "./routers/project";
+import { section_router } from "./routers/section";
 
 const api = j
   .router()
@@ -9,6 +10,7 @@ const api = j
 
 const app_router = j.mergeRouters(api, {
   project: project_router,
+  section: section_router,
 });
 
 export type AppRouter = typeof app_router;
