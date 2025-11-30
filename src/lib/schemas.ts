@@ -14,7 +14,19 @@ export type SignInFormData = z.infer<typeof SignInZodSchema>;
 
 export const ProjectZodSchema = z.object({
   title: z.string().min(1, "Insert the title for the project."),
-  slug: z.string().min(1, "Insert the slug for the project."),
+  slug: z
+    .string()
+    .min(1, "Insert the slug for the section.")
+    .transform((val) =>
+      val
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/[^\w\-]/g, "")
+        .replace(/\-\-+/g, "-")
+        .replace(/^-+/, "")
+        .replace(/-+$/, "")
+    ),
   description: z.string().min(1, "Insert the description for the project."),
   // Metadata
   languages: z

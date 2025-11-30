@@ -69,10 +69,10 @@ model Project {
 }
 
 model Section {
-  id      String @id @default(cuid())
+  id      String  @id @default(cuid())
   title   String
   slug    String
-  content String @db.Text // HTML/Markdown content from Tiptap
+  content String? @db.Text // HTML/Markdown content from Tiptap, This is optional when is creating then can be updated later
   order   Int
 
   // Hierarchical relationship (for nested sections)
@@ -81,7 +81,7 @@ model Section {
   children  Section[] @relation("SectionHierarchy")
 
   // Metadata
-  icon String? // Emoji
+  icon String
 
   // Timestamps
   createdAt DateTime @default(now())
