@@ -135,3 +135,49 @@
     @apply cursor-pointer;
   }
 }
+
+.tiptap {
+  padding: 1rem;
+  min-height: 24rem;
+  outline: none;
+}
+
+.tiptap:focus {
+  outline: none;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--muted-foreground);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.tiptap blockquote {
+  border-left: 4px solid var(--primary);
+  font-style: italic;
+  padding-top: 0.5rem;
+  padding-left: 0.5rem;
+  padding-bottom: 0.5rem;
+  color: hsl(var(--foreground) / 0.8);
+}
+
+.tiptap pre {
+  background-color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+  line-height: 1.5;
+  font-size: 0.9rem;
+}
+
+.tiptap pre code {
+  padding: 0;
+  color: var(--foreground);
+  background: none;
+  font-size: inherit;
+  font-family: inherit;
+}
