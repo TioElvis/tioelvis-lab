@@ -4,7 +4,7 @@ import { client } from "@/lib/client";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ProjectForm } from "../../components/project-form";
+import { ProjectForm } from "../../../components/project-form";
 import { ProjectFormData, ProjectZodSchema } from "@/lib/schemas";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -40,7 +40,7 @@ export function ProjectContent({ project_id, defaultValues }: Props) {
       queryClient.invalidateQueries({ queryKey: ["project"] });
 
       toast.success("Project updated successfully");
-      router.replace(`/dashboard/projects/${data.slug}`);
+      router.replace(`/dashboard/projects/edit/${data.slug}`);
     },
     onError: (error) => {
       toast.error(error.message);

@@ -65,7 +65,7 @@ export function DashboardProjectCard(project: Readonly<Project>) {
           asChild
           variant="secondary"
           className="w-full group-hover:text-primary">
-          <Link href={`/dashboard/projects/${project.slug}`}>
+          <Link href={`/dashboard/projects/edit/${project.slug}`}>
             Edit Project
             <EditIcon className="h-4 w-4" />
           </Link>

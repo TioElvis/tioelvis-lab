@@ -40,7 +40,7 @@ export default function Page() {
     },
     onSuccess: (response) => {
       toast.success("Project created successfully");
-      router.push(`/dashboard/projects/${response.slug}`);
+      router.push(`/dashboard/projects/edit/${response.slug}`);
     },
     onError: (error) => {
       toast.error(error.message);
