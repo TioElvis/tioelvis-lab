@@ -70,7 +70,7 @@ export const project_router = j.router({
 
       const project = await db.project.findUnique({
         where: { slug },
-        include: { author: { select: { name: true } } },
+        include: { author: { select: { name: true } }, sections: true },
       });
 
       if (!project) {

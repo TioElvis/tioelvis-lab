@@ -13,7 +13,7 @@ interface Props {
   defaultValues: ProjectFormData;
 }
 
-export function SlugProjectContent({ project_id, defaultValues }: Props) {
+export function ProjectContent({ project_id, defaultValues }: Props) {
   const form = useForm<ProjectFormData>({
     resolver: zodResolver(ProjectZodSchema),
     defaultValues: defaultValues,
