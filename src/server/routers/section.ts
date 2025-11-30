@@ -139,10 +139,12 @@ export const section_router = j.router({
         }
       }
 
-      // If parent_id changes, we may need to update the order
+      // Check if parent_id changed
+      const parentChanged = currentSection.parent_id !== (parent_id || null);
       let newOrder = currentSection.order;
 
-      if (currentSection.parent_id !== (parent_id || null)) {
+      if (parentChanged) {
+        // Step 1: Get the new order in the target group
         const maxOrderSection = await db.section.findFirst({
           where: {
             project_id,
@@ -153,8 +155,28 @@ export const section_router = j.router({
         });
 
         newOrder = maxOrderSection ? maxOrderSection.order + 1 : 1;
+
+        // Step 2: For the original group, reorder the sections
+        // Get all sections in the original group that come after the moved section
+        const sectionsToReorder = await db.section.findMany({
+          where: {
+            project_id,
+            parent_id: currentSection.parent_id,
+            order: { gt: currentSection.order },
+          },
+          orderBy: { order: "asc" },
+        });
+
+        // Step 3: Update the order of each section (subtract 1 from each)
+        for (const section of sectionsToReorder) {
+          await db.section.update({
+            where: { id: section.id },
+            data: { order: section.order - 1 },
+          });
+        }
       }
 
+      // Step 4: Update the main section
       const updatedSection = await db.section.update({
         where: { id: section_id },
         data: {
