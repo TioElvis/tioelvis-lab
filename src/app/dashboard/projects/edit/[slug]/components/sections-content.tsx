@@ -8,9 +8,15 @@ interface Props {
 }
 
 export function SectionsContent({ project }: Props) {
-  const sections = project.sections.filter(
-    (section) => section.parent_id === null
-  );
+  const root_sections = project.sections
+    .filter((section) => section.parent_id === null)
+    .sort((a, b) => a.order - b.order);
+
+  const getChildSections = (parent_id: string) => {
+    return project.sections
+      .filter((section) => section.parent_id === parent_id)
+      .sort((a, b) => a.order - b.order);
+  };
 
   return (
     <section className="py-4 flex flex-col-reverse xl:grid xl:grid-cols-8 gap-4">
@@ -23,21 +29,37 @@ export function SectionsContent({ project }: Props) {
         )}
         {project.sections.length > 0 && (
           <Fragment>
-            {project.sections.map((section) => {
+            {root_sections.map((section) => {
+              const child_sections = getChildSections(section.id);
+
               return (
-                <SectionCard
-                  key={section.id}
-                  section={section}
-                  list_sections={sections}
-                  project_id={project.id}
-                  project_slug={project.slug}
-                />
+                <Fragment key={section.id}>
+                  <SectionCard
+                    section={section}
+                    list_sections={root_sections}
+                    project_id={project.id}
+                    project_slug={project.slug}
+                  />
+
+                  {child_sections.map((child_section) => (
+                    <SectionCard
+                      key={child_section.id}
+                      section={child_section}
+                      list_sections={root_sections}
+                      project_id={project.id}
+                      project_slug={project.slug}
+                    />
+                  ))}
+                </Fragment>
               );
             })}
           </Fragment>
         )}
       </div>
-      <CreateSectionButton list_sections={sections} project_id={project.id} />
+      <CreateSectionButton
+        list_sections={root_sections}
+        project_id={project.id}
+      />
     </section>
   );
 }

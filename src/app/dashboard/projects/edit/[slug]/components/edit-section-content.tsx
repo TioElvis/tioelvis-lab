@@ -9,10 +9,10 @@ import { client } from "@/lib/client";
 import { EditIcon } from "lucide-react";
 import { Section } from "@prisma/client";
 import { useForm } from "react-hook-form";
-import { Fragment, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
+import { Fragment, useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SectionDialogForm } from "./section-dialog-form";
 import { SectionFormData, SectionZodSchema } from "@/lib/schemas";
@@ -38,6 +38,10 @@ export default function EditSectionContent({
     mode: "onSubmit",
   });
 
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
+
   const router = useRouter();
 
   const mutation = useMutation({
@@ -55,7 +59,6 @@ export default function EditSectionContent({
       return response.json();
     },
     onSuccess: () => {
-      form.reset();
       setDialog(false);
       router.refresh();
       toast.success("Section edited successfully");
