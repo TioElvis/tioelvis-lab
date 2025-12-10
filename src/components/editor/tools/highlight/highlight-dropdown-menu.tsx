@@ -97,18 +97,16 @@ export function HighlightDropdownMenu({ editor }: Readonly<Props>) {
             </Tooltip>
           );
         })}
-        {isActive && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => removeHighlight()}>
-                <BanIcon />
-              </DropdownMenuItem>
-            </TooltipTrigger>
-            <TooltipContent>Remove Highlight</TooltipContent>
-          </Tooltip>
-        )}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => removeHighlight()}>
+              <BanIcon />
+            </DropdownMenuItem>
+          </TooltipTrigger>
+          <TooltipContent>Remove Highlight</TooltipContent>
+        </Tooltip>
       </DropdownMenuContent>
     </DropdownMenu>
   );

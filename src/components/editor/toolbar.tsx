@@ -1,5 +1,7 @@
 import { Editor } from "@tiptap/react";
 import { MarkGroup } from "./tools/mark/mark-group";
+import { DialogLink } from "./tools/link/dialog-link";
+import { DialogImage } from "./tools/image/dialog-image";
 import { UndoRedoButton } from "./tools/undo-redo/undo-redo-button";
 import { CodeBlockButton } from "./tools/codeblock/code-block-button";
 import { BlockquoteButton } from "./tools/blockquote/blockquote-button";
@@ -26,6 +28,8 @@ export function Toolbar({ editor }: Readonly<Props>) {
       <CodeBlockButton editor={editor} />
       <MarkGroup editor={editor} />
       <HighlightDropdownMenu editor={editor} />
+      <DialogLink editor={editor} />
+      <DialogImage editor={editor} />
     </header>
   );
 }

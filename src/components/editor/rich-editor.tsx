@@ -1,5 +1,6 @@
 "use client";
 import { Toolbar } from "./toolbar";
+import Image from "@tiptap/extension-image";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -24,6 +25,38 @@ export function RichEditor(props: Readonly<Props>) {
           HTMLAttributes: {
             class: "list-decimal pl-6",
           },
+        },
+        link: {
+          autolink: true,
+          openOnClick: false,
+          linkOnPaste: true,
+          HTMLAttributes: {
+            class:
+              "text-primary underline cursor-pointer hover:text-primary/80",
+          },
+        },
+      }).extend({
+        addKeyboardShortcuts() {
+          return {
+            Space: ({ editor }) => {
+              const { state } = editor;
+              if (editor.isActive("link")) {
+                const { tr } = state;
+                tr.insertText(" ");
+                tr.removeStoredMark(state.schema.marks.link);
+                editor.view.dispatch(tr);
+                return true;
+              }
+              return false;
+            },
+          };
+        },
+      }),
+      Image.configure({
+        inline: true,
+        allowBase64: true,
+        HTMLAttributes: {
+          class: "rounded-lg max-w-full h-64 z-0 bg-input",
         },
       }),
       Placeholder.configure({
