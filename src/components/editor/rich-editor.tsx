@@ -56,7 +56,7 @@ export function RichEditor(props: Readonly<Props>) {
         inline: true,
         allowBase64: true,
         HTMLAttributes: {
-          class: "rounded-lg max-w-full h-64 z-0 bg-input",
+          class: "rounded-lg max-w-full h-80 z-0 bg-input",
         },
       }),
       Placeholder.configure({
@@ -79,7 +79,7 @@ export function RichEditor(props: Readonly<Props>) {
   });
 
   return (
-    <section className="border rounded-md">
+    <section className="w-full h-full border rounded-md flex flex-col relative overflow-y-auto">
       <Toolbar editor={editor} />
       <EditorContent editor={editor} />
     </section>

@@ -19,7 +19,7 @@ export function Toolbar({ editor }: Readonly<Props>) {
   }
 
   return (
-    <header className="w-full p-2 flex flex-wrap gap-2 border-b">
+    <header className="w-full p-2 flex flex-wrap gap-2 sticky top-0 z-20 bg-background border-b">
       <UndoRedoButton action="undo" editor={editor} />
       <UndoRedoButton action="redo" editor={editor} />
       <HeadingDropdownMenu editor={editor} />
