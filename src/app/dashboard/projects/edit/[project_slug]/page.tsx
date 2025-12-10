@@ -4,15 +4,15 @@ import { SectionsContent } from "./components/sections-content";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ project_slug: string }>;
 }
 
 export const dynamic = "force-dynamic";
 
 export default async function Page({ params }: Readonly<Props>) {
-  const { slug } = await params;
+  const { project_slug } = await params;
 
-  const response = await client.project.getBySlug.$get({ slug });
+  const response = await client.project.getBySlug.$get({ slug: project_slug });
 
   const project = await response.json();
 
