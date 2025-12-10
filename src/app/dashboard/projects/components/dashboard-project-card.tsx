@@ -26,7 +26,9 @@ export function DashboardProjectCard(project: Readonly<Project>) {
           <div className="flex items-center gap-4">
             <Badge
               variant="secondary"
-              className={cn(project.status === "PUBLISHED" && "bg-green-800")}>
+              className={cn(
+                project.status === "PUBLISHED" && "text-foreground bg-green-600"
+              )}>
               {project.status}
             </Badge>
             {project.featured && <Badge>Featured</Badge>}
